@@ -12,7 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
  * add/remove/clear movies
  * establish rules around what data can be entered (exceptions)
  * display movies in a presentable way
- * testing2
+ * have a menu that links to functions
  */
 namespace MovieList
 {
@@ -25,26 +25,35 @@ namespace MovieList
         {
             this.ListName = listname;
         }
+
+        
         public void AddMovie(int NumberOfMovies)
         {
             for (int i = 0; i < NumberOfMovies; i++)
             {
-                Console.Write("Movie Title: ");
-                string title = Console.ReadLine();
+                try
+                {
 
-                Console.Write("Release Date: ");
-                string releasedate = Console.ReadLine();
-                int releasedateyear = Convert.ToInt32(releasedate);
+                    Console.Write("Movie Title: ");
+                    string title = Console.ReadLine();
 
-                Console.Write("Rating: ");
-                string rating = Console.ReadLine();
-                int ratingInt = Convert.ToInt32(rating);
+                    Console.Write("Release Date: ");
+                    string releasedate = Console.ReadLine();
+                    int releasedateyear = Convert.ToInt32(releasedate);
 
-                Movie movie = new Movie(title, releasedateyear, ratingInt, DateTime.Now);
+                    Console.Write("Rating: ");
+                    string rating = Console.ReadLine();
+                    int ratingInt = Convert.ToInt32(rating);
 
-                Console.WriteLine("Movie added to list\n");
-                ListOfMovies.Add(movie);
+                    Movie movie = new Movie(title, releasedateyear, ratingInt, DateTime.Now);
 
+                    Console.WriteLine("Movie added to list\n");
+                    ListOfMovies.Add(movie);
+                }
+                catch(FormatException e)
+                {
+                    Console.WriteLine($"requries integar {e}");
+                }
             }
         }
 
@@ -75,11 +84,40 @@ namespace MovieList
         public static int MovieID = 1000;
         public string Name { get; }
         public string Title { get; set; }
-        public int ReleaseDate { get; set; }
-        public double Rating { get; set; }
+        
+        private int _releasedate;
+        public int ReleaseDate 
+        { 
+            get
+            { return _releasedate; }
+            set
+            {
+                if (value < 1885 || value > 2025)
+                {
+                    throw new Exception("Movies release date needs to be within the years 1885 to 2030");
+                }
+                else
+                { _releasedate = value; }
+            }
+        }
+
+        private double _rating;
+        public double Rating
+        {
+            get
+            { return _rating; }
+            set
+            {
+                if (value < 0 || value > 10)
+                {
+                    throw new Exception("Movie Ratings are only between 1-10");
+                }
+                else
+                { _rating = value; }
+            }
+        }
         public DateTime AddedDate { get; set; }
 
-        public int MovieRank { get; set; }
 
         public Movie(string title, int releaseDate, double rating, DateTime addeddate)
         {
@@ -89,9 +127,8 @@ namespace MovieList
             this.ReleaseDate = releaseDate;
             this.Rating = rating;
             this.AddedDate = addeddate;
-            this.MovieRank = 0;
         }   
     }
-}
+   }
 
 
